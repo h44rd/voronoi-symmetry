@@ -11,7 +11,7 @@
 
 // DRAWING GLOBALS
 import {gS,
-        livecanvas, lctx, canvas, ctx,
+        livecanvas, lctx, canvas, ctx, vctx,
         affineset, updateSymmetry, updateStyle, drawKeyToOrderMap,
         commitOp
        } from './main';
@@ -20,6 +20,7 @@ import {l2dist} from './math_utils';
 
 import {drawHitCircle} from './canvas_utils';
 
+import { Voronoi2D } from './voronoi';
 // Draw Single Line Segments
 //------------------------------------------------------------------------------
 export class LineOp {
@@ -28,11 +29,12 @@ export class LineOp {
     this.points = points;
     this.ctxStyle = ctxStyle;
     this.symmState = symmState;
-  }
+    }
 
   render(ctx){
     _.assign(ctx, this.ctxStyle);
     updateSymmetry(this.symmState);
+    var i = 0;
     //gS.$emit('symmUpdate', this.symmState);
     for (let af of affineset) {
       const Tp1 = af.on(this.points[0][0], this.points[0][1]);
@@ -41,6 +43,8 @@ export class LineOp {
       ctx.moveTo(Tp1[0], Tp1[1]);
       ctx.lineTo(Tp2[0], Tp2[1]);
       ctx.stroke();
+      ctx.fillText(i.toString(), Tp1[0], Tp1[1]);
+      i += 1;
     }
   }
 }
@@ -61,17 +65,33 @@ export class LineTool {
       {name: "cancel", desc: "cancel line",    icon: "icon-cross",     key: "Escape"},
       {name: "commit", desc: "start new (automatic on new click)", icon: "icon-checkmark", key: "Enter"},
     ];
+    this.voronoi = new Voronoi2D();
+    this.line_id = 0;
   }
 
   liverender() {
-    lctx.clearRect(0, 0, canvas.width, canvas.height);
+    lctx.clearRect(0, 0, livecanvas.width, livecanvas.height);
+    this.line_id = 0;
     for (let af of affineset) {
       const Tp1 = af.on(this.points[0][0], this.points[0][1]);
       const Tp2 = af.on(this.points[1][0], this.points[1][1]);
-      lctx.beginPath();
-      lctx.moveTo(Tp1[0], Tp1[1]);
-      lctx.lineTo(Tp2[0], Tp2[1]);
-      lctx.stroke();
+      this.voronoi.setNewColor(this.line_id);
+      if(Tp2[0] <= 1.05 * window.innerWidth &&
+        Tp2[1] <= 1.05 * window.innerHeight &&
+        Tp2[0] >= -0.05 * window.innerWidth &&
+        Tp2[1] >= -0.05 * window.innerHeight) {
+        lctx.beginPath();
+        lctx.moveTo(Tp1[0], Tp1[1]);
+        lctx.lineTo(Tp2[0], Tp2[1]);
+        lctx.stroke();
+        lctx.fillText(this.line_id.toString(), Tp1[0], Tp1[1]);
+        // console.log(af, Tp1, Tp2);
+        this.voronoi.renderLine(this.line_id, Tp1, Tp2);
+        
+      } else {
+        this.voronoi.hideLine(this.line_id);
+      }
+      this.line_id += 1;
     }
     drawHitCircle(lctx, this.points[0][0]-0.5, this.points[0][1]-0.5, this.hitRadius);
     drawHitCircle(lctx, this.points[1][0]-0.5, this.points[1][1]-0.5, this.hitRadius);
@@ -103,6 +123,8 @@ export class LineTool {
     lctx.clearRect(0, 0, livecanvas.width, livecanvas.height);
     this.points = [[0,0],[0,0]];
     this.state = _INIT_;
+    this.voronoi.resetColor();
+    this.voronoi.removeAllObjects();
   }
 
   cancel() {

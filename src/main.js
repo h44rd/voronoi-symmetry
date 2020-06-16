@@ -106,9 +106,9 @@ export const gS = new Vue({
     //-------------------------------
     // -- each drawing op caches the current value of these params when committed
     symmState: {sym: 'p6m',    // symmetry name/key
-                x:800, y:400,  // center of constructed grid symmetry
-                d:100, t:0,    // grid-spacing and rotation (rotation not implemented yet)
-                Nx:18, Ny:14,  // grid Nx, Ny should NOT be too large - too large --> too many draw calls!
+                x:1200, y:800,  // center of constructed grid symmetry
+                d:400, t:0,    // grid-spacing and rotation (rotation not implemented yet)
+                Nx:12, Ny:12,  // grid Nx, Ny should NOT be too large - too large --> too many draw calls!
                 Nrot: 0, Nref: 3, rot: 0 // Rosette parameters
               },
     // Style State

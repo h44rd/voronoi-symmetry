@@ -22,6 +22,7 @@
     "pressure": "^2.1.2",
     "sshpk": "^1.16.0",
     "stringstream": "^1.0.0",
+    "three": "^0.117.1",
     "tinycolor2": "^1.4.1",
     "underscore": "^1.9.1",
     "vue": "^2.5.22",
