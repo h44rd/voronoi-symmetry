@@ -41,6 +41,20 @@ export class Voronoi2D {
         this.coneHeight = 1;
         this.coneSegments = 32;
 
+        this.prismGeometry = {};
+        this.createPrismGeometry();
+
+        var temp_prism_material = new THREE.MeshPhongMaterial( {color: 0xff0000 });
+        this.temp_prism_mesh = new THREE.Mesh(this.prismGeometry, temp_prism_material);
+        this.scene.add(this.temp_prism_mesh);
+        this.temp_prism_mesh.rotateX(Math.PI / 2);
+        console.log(this.temp_prism_mesh.position);
+
+        var light = new THREE.PointLight(0xffffff, 2, 100);
+        light.position.z = 10;
+        this.scene.add(light);
+
+
         // :::: Data :::: //
         this.voronoi_lines = [];
         this.isLineHidder = [];
@@ -190,5 +204,15 @@ export class Voronoi2D {
 
     resetColor() {
         this.colorHue = 47;
+    }
+
+    createPrismGeometry() {
+        var shape = new THREE.Shape();
+        shape.moveTo(-1 * this.coneRadius, 0);
+        shape.lineTo(0, this.coneHeight);
+        shape.lineTo(this.coneRadius, 0);
+        shape.lineTo(-1 * this.coneRadius, 0);
+
+        this.prismGeometry = new THREE.ExtrudeGeometry(shape, {amount: 1, bevelEnabled: false});
     }
 }
