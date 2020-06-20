@@ -14,7 +14,8 @@ export class Voronoi2D {
         this.aspect = window.innerWidth / window.innerHeight;
         
         this.camera = new THREE.OrthographicCamera(this.frustumSize * this.aspect / -2, this.frustumSize * this.aspect / 2, this.frustumSize / 2, this.frustumSize / -2);
-        this.camera.position.z = 1000;
+        this.camera.position.z = 10;
+        // this.camera.position.y = -.5;
         this.camera.lookAt(this.scene.position);
         
         this.factor = 1.0;
@@ -27,7 +28,7 @@ export class Voronoi2D {
 
         // :::: Voronoi elements :::: //
         this.colorHue = 47;
-        this.colorPrime = 17;
+        this.colorPrime = 19;
 
         var geometry = new THREE.PlaneGeometry(10, 10);
         var material = new THREE.MeshBasicMaterial({ color: this.getRandomHueColor(70) });
@@ -44,20 +45,8 @@ export class Voronoi2D {
         this.prismGeometry = {};
         this.createPrismGeometry();
 
-        var temp_prism_material = new THREE.MeshPhongMaterial( {color: 0xff0000 });
-        this.temp_prism_mesh = new THREE.Mesh(this.prismGeometry, temp_prism_material);
-        this.scene.add(this.temp_prism_mesh);
-        this.temp_prism_mesh.rotateX(Math.PI / 2);
-        console.log(this.temp_prism_mesh.position);
-
-        var light = new THREE.PointLight(0xffffff, 2, 100);
-        light.position.z = 10;
-        this.scene.add(light);
-
-
         // :::: Data :::: //
         this.voronoi_lines = [];
-        this.isLineHidder = [];
 
         this.animate();
     }
@@ -79,20 +68,18 @@ export class Voronoi2D {
         var point_v1 = new THREE.Vector2(point1[0], point1[1]);
         var point_v2 = new THREE.Vector2(point2[0], point2[1]);
         
-        // console.log(this.voronoi_lines[line_id]);
-        if(this.voronoi_lines[line_id] == null) {
-            // this.setNewColor();
+       if(this.voronoi_lines[line_id] == null) {
             this.createLine(line_id, point_v1, point_v2);
-            for(var i = 0; i < this.voronoi_lines[line_id]['cones'].length; i++) {
-                this.scene.add(this.voronoi_lines[line_id]['cones'][i]);
-            }
-            // console.log(line_id, point_v1, point_v2);
+            this.scene.add(this.voronoi_lines[line_id]['cones'][0]);
+            this.scene.add(this.voronoi_lines[line_id]['cones'][1]);
+            this.scene.add(this.voronoi_lines[line_id]['prism']);
         }
 
         if(this.voronoi_lines[line_id]['isHidden'] == true) {
-            for(var i = 0; i < this.voronoi_lines[line_id]['cones'].length; i++) {
-                this.scene.add(this.voronoi_lines[line_id]['cones'][i]);
-            }
+            this.scene.add(this.voronoi_lines[line_id]['cones'][0]);
+            this.scene.add(this.voronoi_lines[line_id]['cones'][1]);
+            this.scene.add(this.voronoi_lines[line_id]['prism']);
+
             this.voronoi_lines[line_id]['isHidden'] == false;
         }
 
@@ -129,21 +116,35 @@ export class Voronoi2D {
     }
 
     createLine(line_id, point_v1, point_v2) {
-        // console.log("creating line:", line_id, this.color);
-        var voronoi_cones = []
-        var line_points = this.getLinePoints(point_v1, point_v2, this.line_divisions);
         var cone_color = this.color;
-        for(var i = 0; i < line_points.length; i++) {
-            var cone_mesh = this.makeSeed(line_points[i], cone_color);
-            voronoi_cones.push(cone_mesh);
-        }
+        var voronoi_cones = [];
+        voronoi_cones.push(this.makeSeed(point_v1, cone_color));
+        voronoi_cones.push(this.makeSeed(point_v2, cone_color));
+
+        var voronoi_prism = this.makePrism(point_v1, point_v2, cone_color);
         this.voronoi_lines[line_id] = {
             'id': line_id,
             'color': cone_color,
-            'divisions': this.line_divisions,
             'cones': voronoi_cones,
+            'prism': voronoi_prism,
             'isHidden': false
         };
+    }
+
+    makePrism(point_v1, point_v2, prism_color) {
+        var material = new THREE.MeshBasicMaterial({
+            color: prism_color,
+            polygonOffset: true,
+            polygonOffsetFactor: 1, // positive value pushes polygon further away
+            polygonOffsetUnits: 1
+        });
+
+        var prism = new THREE.Mesh(this.prismGeometry, material);
+        prism.position.set(point_v1.x, point_v1.y, 0.0);
+        prism.scale.z = point_v1.distanceTo(point_v2);
+        prism.rotateX(Math.PI / 2);
+
+        return prism;
     }
 
     makeSeed(point, cone_color) {
@@ -158,6 +159,7 @@ export class Voronoi2D {
 
         cone.position.x = point.x;
         cone.position.y = point.y;
+        cone.position.z = this.coneHeight / 2;
         cone.rotation.x = Math.PI/2;
 
         return cone;
@@ -165,11 +167,20 @@ export class Voronoi2D {
 
     modifyLine(line_id, point_v1, point_v2) {
         assert(this.voronoi_lines[line_id] != null, "Cannot find the line.");
+        
+        this.voronoi_lines[line_id]['cones'][0].position.set(point_v1.x, point_v1.y, this.coneHeight / 2);
+        this.voronoi_lines[line_id]['cones'][1].position.set(point_v2.x, point_v2.y, this.coneHeight / 2);
 
-        var line_points = this.getLinePoints(point_v1, point_v2, this.voronoi_lines[line_id]['divisions']);
-        for(var i = 0; i < this.voronoi_lines[line_id]['cones'].length; i++) {
-            this.voronoi_lines[line_id]['cones'][i].position.set(line_points[i].x, line_points[i].y, 0);
+        var negative_point_v2 = new THREE.Vector2(point_v2.x, point_v2.y);
+        negative_point_v2.negate();
+        var vec1_2 = new THREE.Vector2();
+        vec1_2.addVectors(point_v1, negative_point_v2);
+        this.voronoi_lines[line_id]['prism'].rotation.y = Math.atan(vec1_2.y / vec1_2.x) + Math.PI / 2;
+        if(vec1_2.x >= 0) {
+            this.voronoi_lines[line_id]['prism'].rotation.y += Math.PI;
         }
+        this.voronoi_lines[line_id]['prism'].scale.z = point_v1.distanceTo(point_v2);
+        this.voronoi_lines[line_id]['prism'].position.set(point_v1.x, point_v1.y, 0);
     }
 
     hideLine(line_id) {
@@ -177,6 +188,7 @@ export class Voronoi2D {
             for(var i = 0; i < this.voronoi_lines[line_id]['cones'].length; i++) {
                 this.scene.remove(this.voronoi_lines[line_id]['cones'][i]);
             }
+            this.scene.remove(this.voronoi_lines[line_id]['prism']);
             this.voronoi_lines[line_id]['isHidden'] = true;
         }
     }

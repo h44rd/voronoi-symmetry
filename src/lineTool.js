@@ -76,18 +76,16 @@ export class LineTool {
       const Tp1 = af.on(this.points[0][0], this.points[0][1]);
       const Tp2 = af.on(this.points[1][0], this.points[1][1]);
       this.voronoi.setNewColor(this.line_id);
-      if(Tp2[0] <= 1.05 * window.innerWidth &&
-        Tp2[1] <= 1.05 * window.innerHeight &&
-        Tp2[0] >= -0.05 * window.innerWidth &&
-        Tp2[1] >= -0.05 * window.innerHeight) {
+      if((Tp2[0] <= 1.1 * window.innerWidth  || Tp1[0] <= 1.1 * window.innerWidth) &&
+        (Tp2[1] <= 1.1 * window.innerHeight  || Tp1[1] <= 1.1 * window.innerHeight) &&
+        (Tp2[0] >= -0.1 * window.innerWidth  || Tp1[0] >= -0.1 * window.innerWidth) &&
+        (Tp2[1] >= -0.1 * window.innerHeight || Tp1[1] >= -0.1 * window.innerHeight)) {
         lctx.beginPath();
         lctx.moveTo(Tp1[0], Tp1[1]);
         lctx.lineTo(Tp2[0], Tp2[1]);
         lctx.stroke();
         lctx.fillText(this.line_id.toString(), Tp1[0], Tp1[1]);
-        // console.log(af, Tp1, Tp2);
         this.voronoi.renderLine(this.line_id, Tp1, Tp2);
-        
       } else {
         this.voronoi.hideLine(this.line_id);
       }
