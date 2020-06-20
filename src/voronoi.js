@@ -28,7 +28,7 @@ export class Voronoi2D {
 
         // :::: Voronoi elements :::: //
         this.colorHue = 47;
-        this.colorPrime = 19;
+        this.colorPrime = 17;
 
         var geometry = new THREE.PlaneGeometry(10, 10);
         var material = new THREE.MeshBasicMaterial({ color: this.getRandomHueColor(70) });
