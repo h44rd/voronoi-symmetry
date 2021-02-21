@@ -579,7 +579,7 @@ export const getPNGTiledata = function(){
 //window.getPNGTiledata = getPNGTiledata; //HACK
 
 
-// :::::: SAVE LINE CSV :::::: //
+// ::::::: SAVE LINE CSV ::::::: //
 export const saveLinesCSV = function() {
   console.log("Save lines called");
 };
