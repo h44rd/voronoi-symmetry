@@ -11,28 +11,60 @@
     </span>
     <br>
     <!--Rotation Free<br>-->
-    <es-button name="p1" :selected="cursym" @bclick="changeSym"></es-button>
+    <!-- <es-button name="p1" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="hexgrid" :selected="cursym" @bclick="changeSym">p1<i>hex</i></es-button>
     <es-button name="diagonalgrid" :selected="cursym" @bclick="changeSym">p1<i>diag</i></es-button>
     <es-button name="pm" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="cm" :selected="cursym" @bclick="changeSym"></es-button>
-    <es-button name="pg" :selected="cursym" @bclick="changeSym"></es-button><br>
+    <es-button name="pg" :selected="cursym" @bclick="changeSym"></es-button><br> -->
     <!--<br>180&deg;</br>-->
-    <es-button name="pmg" :selected="cursym" @bclick="changeSym"></es-button>
+    <!-- <es-button name="pmg" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="pgg" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="pmm" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="p2" :selected="cursym" @bclick="changeSym"></es-button>
-    <es-button name="cmm" :selected="cursym" @bclick="changeSym"></es-button><br>
+    <es-button name="cmm" :selected="cursym" @bclick="changeSym"></es-button><br> -->
     <!--<br>Square<br>-->
-    <es-button name="p4" :selected="cursym" @bclick="changeSym"></es-button>
+    <!-- <es-button name="p4" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="p4g" :selected="cursym" @bclick="changeSym"></es-button>
-    <es-button name="p4m" :selected="cursym" @bclick="changeSym"></es-button><br>
+    <es-button name="p4m" :selected="cursym" @bclick="changeSym"></es-button><br> -->
     <!--<br>Hexagonal<br>-->
-    <es-button name="p3" :selected="cursym" @bclick="changeSym"></es-button>
+    <!-- <es-button name="p3" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="p6" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="p31m" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="p3m1" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="p6m" :selected="cursym" @bclick="changeSym"></es-button><br> -->
+    
+
+    <!-------------------------------------------------------------------------------------------->
+    <!--Global-->
+    <es-button name="p1" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="hexgrid" :selected="cursym" @bclick="changeSym">p1<i>hex</i></es-button>
+    <es-button name="diagonalgrid" :selected="cursym" @bclick="changeSym">p1<i>diag</i></es-button>
+    <es-button name="pg" :selected="cursym" @bclick="changeSym"></es-button>
+    
+    <es-button name="p2" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="p4" :selected="cursym" @bclick="changeSym"></es-button>
+   
+    <es-button name="p3" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="p6" :selected="cursym" @bclick="changeSym"></es-button>
+
+    <br><br>
+
+    <!--Localized Effect-->  
+    <es-button name="p4g" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="pm" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="cm" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="pmg" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="pgg" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="pmm" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="cmm" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="p4m" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="p31m" :selected="cursym" @bclick="changeSym"></es-button>
+    <es-button name="p3m1" :selected="cursym" @bclick="changeSym"></es-button>
     <es-button name="p6m" :selected="cursym" @bclick="changeSym"></es-button><br>
+
+
+    <br><br>
 
     <es-button name="grid" :selected="curtool" @bclick="toggleGridTool" hint="toggle symmetry grid adjustment tool">
       grid adjust

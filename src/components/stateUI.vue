@@ -3,14 +3,14 @@
     <template v-if="params.fullUI">
       <div id="logo" class="Aligner" style="margin-top:-10px;">
         <div class="Aligner-item">
-          <span class="eslogotext" style="font-variant:small-caps;margin-right:10px;">escher</span><br>
+          <span class="eslogotext" style="font-variant:small-caps;margin-right:10px;">escher - voronoi</span><br>
         </div>
-        <div class="Aligner-item">
+        <!-- <div class="Aligner-item">
           <img src="/static/svg/eslogo2.svg" height="24px" style="margin-top:4px;"/>
-        </div>
-        <div class="Aligner-item">
-          <span class="eslogotext" style="font-variant:small-caps;margin-left:10px;">sketch</span>
-        </div>
+        </div> -->
+        <!-- <div class="Aligner-item">
+          <span class="eslogotext" style="font-variant:small-caps;margin-left:10px;">voronoi</span>
+        </div> -->
         <div class="Aligner-item">
           <div class="button" :class="{selected: !params.fullUI}" style="margin-left:80%;"
               @click="toggleUI" @mouseover="setHint" hint="minimized/mobile UI mode">

@@ -1,6 +1,6 @@
 <template>
 <div id="fileUI" :style="panelStyle">
-  <span class="UIheader">print.share.export</span><br>
+  <span class="UIheader">download</span><br>
 
   <template v-if="options.showFileName">
     <es-numfield param="filename" label="filename"
@@ -46,7 +46,7 @@
 
   </template>
 
-  <es-button name="saveSVG" @bclick="saveSVG" hint="export drawing as SVG">
+  <!-- <es-button name="saveSVG" @bclick="saveSVG" hint="export drawing as SVG">
     <span class="icon-folder-download"></span> SVG
   </es-button>
 
@@ -56,6 +56,10 @@
 
   <es-button name="savePNGTile" @bclick="savePNGTile" hint="export symmetric tile as PNG">
     <span class="icon-folder-download"></span> Tile
+  </es-button> -->
+
+  <es-button name="saveLines" @bclick="saveLinesCSV" hint="export line coordinates as CSV">
+    <span class="icon-folder-download"></span> Lines (CSV)
   </es-button>
 
   <template v-if="options.showJSONexport">
@@ -81,7 +85,7 @@
 <script>
 import esNumfield from './es_numfield';
 import esButton from './es_button';
-import {gS, forceCommit, saveSVG, savePNG, savePNGTile, saveJSON, loadJSON} from '../main';
+import {gS, forceCommit, saveSVG, savePNG, savePNGTile, saveJSON, loadJSON, saveLinesCSV} from '../main';
 import {networkConfig} from '../config';
 import {saveSketch, saveTileforPrint} from '../network';
 import _ from 'underscore';
@@ -103,6 +107,7 @@ export default {
   methods:{  //XXX: dirty, need to move all of these to top-level "$emit" calls
     savePNG: function() { forceCommit();  savePNG(); },
     savePNGTile: function() { forceCommit();  savePNGTile(); },
+    saveLinesCSV: function() { forceCommit(); saveLinesCSV(); },
     saveSVG: function() { forceCommit();  saveSVG(); },
     saveJSON: function() { forceCommit();  saveJSON(); },
     loadJSON: function({type, target}){

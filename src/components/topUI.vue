@@ -8,19 +8,19 @@
     <state-ui :params="params"/>
 
     <!-- Configuration UI -->
-    <config-ui :params="params" :options="options"/>
+    <!-- <config-ui :params="params" :options="options"/> -->
 
     <!--<hint-panel :params="params"/>-->
 
     <!-- Tool Selection -->
     <tool-ui :params="params"/>
-    <nav-panel :params="params"/>
+    <!-- <nav-panel :params="params"/> -->
 
     <!-- Color UI -->
-    <color-ui :params="params" :options="options" :stroke-color="strokeColor" :fill-color="fillColor"/>
+    <!-- <color-ui :params="params" :options="options" :stroke-color="strokeColor" :fill-color="fillColor"/> -->
 
     <!-- Line Style UI -->
-    <style-ui :ctx-style="ctxStyle" :params="params" :options="options"/>
+    <!-- <style-ui :ctx-style="ctxStyle" :params="params" :options="options"/> -->
 
     <!-- Symmetry and Grid Selection -->
     <symmetry-ui :symm-state="symmState" :params="params" :options="options"/>
@@ -31,7 +31,7 @@
     <!-- Footnote -->
     <div :style="{display: params.fullUI ? 'block' : 'none'}">
       <br>
-      <div style="font-size:10px;color:#888888;text-align:left;">Anselm Levskaya &copy; 2017</div>
+      <div style="font-size:10px;color:#888888;text-align:left;">Haard Panchal &copy; 2021</div>
     </div>
 
   </div><!-- /sketch-UI -->

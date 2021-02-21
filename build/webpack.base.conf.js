@@ -28,7 +28,7 @@ module.exports = {
   },
   plugins: [
     new WebpackShellPlugin({
-      onBuildStart:['./mark_version.sh'],
+      // onBuildStart:['./mark_version.sh'],
       /*onBuildEnd:['echo "Webpack End"']*/
     })
   ],

@@ -1,8 +1,8 @@
 {
   "name": "eschersketch",
   "version": "1.0.0",
-  "description": "A Symmetry Drawing Program",
-  "author": "Anselm Levskaya <levskaya@gmail.com>",
+  "description": "A Voronoi - Symmetry Drawing Program",
+  "author": "Haard Panchal <panchalhaard@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

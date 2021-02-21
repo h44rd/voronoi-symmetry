@@ -579,6 +579,11 @@ export const getPNGTiledata = function(){
 //window.getPNGTiledata = getPNGTiledata; //HACK
 
 
+// :::::: SAVE LINE CSV :::::: //
+export const saveLinesCSV = function() {
+  console.log("Save lines called");
+};
+
 export const savePNG = function() {
   const pixelScale = gS.options.pngUpsample; // pixel density scaling factor
   // Render into temporary canvas for blob conversion and export
@@ -751,7 +756,7 @@ const initState = function() {
 
   //HACK: needed to get Vue to properly update pencil options slider on init... a Vue bug?
   gS.params.curTool = 'poly';
-  setTimeout(()=>gS.params.curTool = 'pencil', 10);
+  setTimeout(()=>gS.params.curTool = 'line', 10);
 
 };
 
