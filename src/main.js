@@ -105,7 +105,7 @@ export const gS = new Vue({
     // Symmetry State
     //-------------------------------
     // -- each drawing op caches the current value of these params when committed
-    symmState: {sym: 'p6m',    // symmetry name/key
+    symmState: {sym: 'p1',    // symmetry name/key
                 x:1200, y:800,  // center of constructed grid symmetry
                 d:400, t:0,    // grid-spacing and rotation (rotation not implemented yet)
                 Nx:12, Ny:12,  // grid Nx, Ny should NOT be too large - too large --> too many draw calls!
@@ -582,6 +582,30 @@ export const getPNGTiledata = function(){
 // ::::::: SAVE LINE CSV ::::::: //
 export const saveLinesCSV = function() {
   console.log("Save lines called");
+  var points = [["x1", "y1", "x2", "y2"]];
+  for(let cmd of cmdStack) {
+    updateSymmetry(cmd.symmState);
+    //gS.$emit('symmUpdate', this.symmState);
+    for (let af of affineset) {
+      const Tp1 = af.on(cmd.points[0][0], cmd.points[0][1]);
+      const Tp2 = af.on(cmd.points[1][0], cmd.points[1][1]);
+      points.push([Tp1[0], Tp1[1], Tp2[0], Tp2[1]]);
+    }
+  }
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  points.forEach(function(rowArray) {
+      let row = rowArray.join(",");
+      csvContent += row + "\r\n";
+  });
+
+  var encodedUri = encodeURI(csvContent);
+  var link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "points.csv");
+  document.body.appendChild(link);
+
+  link.click();
 };
 
 export const savePNG = function() {
