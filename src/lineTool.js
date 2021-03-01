@@ -84,7 +84,7 @@ export class LineTool {
         lctx.moveTo(Tp1[0], Tp1[1]);
         lctx.lineTo(Tp2[0], Tp2[1]);
         lctx.stroke();
-        lctx.fillText(this.line_id.toString(), Tp1[0], Tp1[1]);
+        // lctx.fillText(this.line_id.toString(), Tp1[0], Tp1[1]);
         this.voronoi.renderLine(this.line_id, Tp1, Tp2);
       } else {
         this.voronoi.hideLine(this.line_id);

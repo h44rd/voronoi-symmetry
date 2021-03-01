@@ -32,6 +32,8 @@
     <div :style="{display: params.fullUI ? 'block' : 'none'}">
       <br>
       <div style="font-size:10px;color:#888888;text-align:left;">Haard Panchal &copy; 2021</div>
+      <br>
+      <div style="font-size:10px;color:#888888;text-align:left;">Forked from <a href="https://github.com/levskaya/eschersketch">levskaya/escherketch</a></div>      
     </div>
 
   </div><!-- /sketch-UI -->

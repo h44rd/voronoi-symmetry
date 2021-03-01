@@ -1,6 +1,13 @@
 import { assert } from "hoek";
 import { livecanvas } from "./main";
 
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass"
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { SobelOperatorShader } from "three/examples/jsm/shaders/SobelOperatorShader";
+import { LuminosityShader } from "three/examples/jsm/shaders/LuminosityShader";
+import { PostProcessShader } from "./PostProcessShader";
+
 var THREE = require("three");
 
 export class Voronoi2D {
@@ -25,6 +32,26 @@ export class Voronoi2D {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.screenWidth, this.screenHeight);
         document.body.appendChild(this.renderer.domElement);
+
+        // :::: Postprocessing :::: //
+        this.composer = new EffectComposer(this.renderer);
+        const renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(renderPass);
+
+        // color to grayscale conversion
+
+        // const effectGrayScale = new ShaderPass( LuminosityShader );
+        // this.composer.addPass( effectGrayScale );
+
+        // you might want to use a gaussian blur filter before
+        // the next pass to improve the result of the Sobel operator
+
+        // Sobel operator
+
+        const effectSobel = new ShaderPass( PostProcessShader );
+        effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+        effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
+        this.composer.addPass( effectSobel );
 
         // :::: Voronoi elements :::: //
         this.colorHue = 47;
@@ -53,7 +80,8 @@ export class Voronoi2D {
 
     // :::::::::: Rendering :::::::::: //
     render() {
-        this.renderer.render(this.scene, this.camera);
+        // this.renderer.render(this.scene, this.camera);
+        this.composer.render();
     }
 
     animate() {
