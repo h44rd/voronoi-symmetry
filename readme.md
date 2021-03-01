@@ -1,7 +1,7 @@
 Escher - Voronoi
 ===========
 
-The website is hosted [here](http://voronoi-symmetry.surge.sh/)
+The website is hosted [here](http://voronoi-symmetry.surge.sh/).
 
 ### Local Install / Build Setup
 
