@@ -43,7 +43,7 @@ export class LineOp {
       ctx.moveTo(Tp1[0], Tp1[1]);
       ctx.lineTo(Tp2[0], Tp2[1]);
       ctx.stroke();
-      ctx.fillText(i.toString(), Tp1[0], Tp1[1]);
+      // ctx.fillText(i.toString(), Tp1[0], Tp1[1]);
       i += 1;
     }
   }
