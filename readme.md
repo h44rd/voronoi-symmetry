@@ -1,6 +1,8 @@
 Escher - Voronoi
 ===========
 
+The website is hosted [here](http://voronoi-symmetry.surge.sh/)
+
 ### Local Install / Build Setup
 
 Built with ES6, webpack, babel, [Vue][vue] 2.0. Project Structure derives from the vuejs es6 webpack template.
