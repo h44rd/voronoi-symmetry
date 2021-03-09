@@ -574,8 +574,8 @@ export const planarSymmetries = {
   pg: {
     rots: [],
     refs: [],
-    glides: [ [ PI/2, sqrt(3)/2, 0.0, 0.0] ],
-    //glides: [ [ PI/2, 1/2, 0.0, 0.0] ]
+    // glides: [ [ PI/2, sqrt(3)/2, 0.0, 0.0] ],
+    glides: [ [ PI/2, 1/2, 0.0, 0.0] ],
     vec0: [ 1, 0 ],
     vec1: [ 0, -1 ],
     tile: [ 1, 1 ]
