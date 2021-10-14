@@ -1,4 +1,4 @@
-Escher - Voronoi
+Voronoi - Symmetry
 ===========
 
 The website is hosted [here](http://voronoi-symmetry.surge.sh/).
