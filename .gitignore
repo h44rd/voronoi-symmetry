@@ -13,3 +13,4 @@ static/version_info.js
 *.ntvs*
 *.njsproj
 *.sln
+.vs/
