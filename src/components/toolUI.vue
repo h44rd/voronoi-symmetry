@@ -17,9 +17,9 @@
     <!-- <es-button name="poly"   :selected="curtool" @bclick="changeTool" hint="polyline tool">
       <span class="icon-polyline"></span>
     </es-button> -->
-    <!-- <es-button name="path" :selected="curtool" @bclick="changeTool" hint="bezier path tool">
+    <es-button name="path" :selected="curtool" @bclick="changeTool" hint="bezier path tool">
       <span class="icon-pen"></span>
-    </es-button> -->
+    </es-button>
     <!--
     <es-button name="grid"   :selected="curtool" @bclick="changeTool">
       grid adjust

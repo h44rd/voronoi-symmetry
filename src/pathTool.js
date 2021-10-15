@@ -20,6 +20,7 @@ import {add2, sub2, scalar2, normalize, l2norm, l2dist, reflectPoint} from './ma
 
 import {drawHitCircle, drawHitLine} from './canvas_utils';
 
+import { Voronoi2D } from './voronoi';
 
 export class PathOp {
   constructor(symmState, ctxStyle, points) {
@@ -85,14 +86,17 @@ export class PathTool {
       {name: "closepath",   desc: "close path", icon: "icon-stroke", key: "KeyC"},
       {name: "smoothclose",   desc: "smooth close path", icon: "icon-radio-unchecked", key: "KeyS"}
     ];
+    this.voronoi = new Voronoi2D();
   }
 
   liverender() {
     lctx.clearRect(0, 0, canvas.width, canvas.height);
     if(this.points.length==0){return;}
+    this.line_id = 0;
     const drawOrder = drawKeyToOrderMap[gS.ctxStyle.drawOrder]; // optional separation of stroke / fill layers
     for(let drawSet of drawOrder){
       for (let af of affineset) {
+        this.voronoi.setNewColor(this.line_id);
         lctx.beginPath();
         let Tpt = af.onVec(this.points[0]);
         lctx.moveTo(Tpt[0], Tpt[1]);
@@ -106,6 +110,7 @@ export class PathTool {
             // line specialization
             if(l2dist(Tpt0, Tcpt0) < EPS && l2dist(Tpt1, Tcpt1)){
               lctx.lineTo(Tpt1[0], Tpt1[1]);
+              this.voronoi.renderLine(this.line_id, Tpt, Tpt1); // TODO
             }
             else {
               lctx.bezierCurveTo(Tcpt0[0], Tcpt0[1], Tcpt1[0], Tcpt1[1], Tpt1[0], Tpt1[1]);
@@ -188,6 +193,8 @@ export class PathTool {
     this.pointsSelected = [];
     this.ctrlPoint = [];
     this.state = _INIT_;
+    this.voronoi.resetColor();
+    this.voronoi.removeAllObjects();
   }
 
   cancel() {

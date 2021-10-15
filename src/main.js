@@ -51,6 +51,8 @@ import {PolyTool, PolyOp}     from './polyTool';
 import {PathTool, PathOp}     from './pathTool';
 
 
+
+
 // gS = global State
 // holds the UI state as well as acting as top-level event bus
 // should eventually port to vuex
@@ -115,7 +117,7 @@ export const gS = new Vue({
     //-------------------------------
     // -- each drawing op caches the current value of these params when committed
     ctxStyle: {
-      drawOrder:   "fillstroke",   // normal, fillstroke, strokefill; NOT a normal attrib of canvas ctx
+      drawOrder:   "nofill",   // normal, fillstroke, strokefill; NOT a normal attrib of canvas ctx
       lineCap:     "butt",     // butt, round, square
       lineJoin:    "round",    // round, bevel, miter
       miterLimit:  10.0,       // applies to miter setting above
@@ -284,7 +286,8 @@ export const updateStyle = function(styles) {
 export const drawKeyToOrderMap = {
   "normal":     [["stroke",   "fill"]],
   "strokefill": [["stroke"], ["fill"]],
-  "fillstroke": [["fill"],   ["stroke"]]
+  "fillstroke": [["fill"],   ["stroke"]],
+  "nofill": [["stroke"]]
 };
 
 // Symmetry Functions
