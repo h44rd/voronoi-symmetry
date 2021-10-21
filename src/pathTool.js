@@ -13,14 +13,13 @@
 import {gS,
         livecanvas, lctx, canvas, ctx,
         affineset, updateSymmetry, updateStyle, drawKeyToOrderMap,
-        commitOp
+        commitOp,
+        gVoronoi
        } from './main';
 import _ from 'underscore';
 import {add2, sub2, scalar2, normalize, l2norm, l2dist, reflectPoint} from './math_utils';
 
 import {drawHitCircle, drawHitLine} from './canvas_utils';
-
-import { Voronoi2D } from './voronoi';
 
 export class PathOp {
   constructor(symmState, ctxStyle, points) {
@@ -28,6 +27,7 @@ export class PathOp {
     this.points = points;
     this.tool = "path";
     this.symmState = symmState;
+    this.voronoi = gVoronoi;
   }
 
   render(ctx) {
@@ -35,6 +35,7 @@ export class PathOp {
     updateSymmetry(this.symmState);
     const drawOrder = drawKeyToOrderMap[this.ctxStyle.drawOrder]; // optional separation of stroke / fill layers
     for(let drawSet of drawOrder){
+      this.line_id = 0;
       for (let af of affineset) {
         ctx.beginPath();
         let Tpt = af.onVec(this.points[0]);
@@ -50,12 +51,14 @@ export class PathOp {
           }
           else {
             ctx.bezierCurveTo(Tcpt0[0], Tcpt0[1], Tcpt1[0], Tcpt1[1], Tpt1[0], Tpt1[1]);
+            this.voronoi.renderCurve(this.line_id, Tpt0, Tcpt0, Tcpt1, Tpt1);
           }
           ptidx += 3;
         }
         for(let drawFunc of drawSet){ //drawFunc = "stroke" or "fill"
           ctx[drawFunc]();
         }
+        this.line_id += 1;
       }
     }
   }
@@ -86,13 +89,13 @@ export class PathTool {
       {name: "closepath",   desc: "close path", icon: "icon-stroke", key: "KeyC"},
       {name: "smoothclose",   desc: "smooth close path", icon: "icon-radio-unchecked", key: "KeyS"}
     ];
-    this.voronoi = new Voronoi2D();
+    this.voronoi = gVoronoi;
   }
 
   liverender() {
     lctx.clearRect(0, 0, canvas.width, canvas.height);
     if(this.points.length==0){return;}
-    this.line_id = 0;
+    this.line_id = 1;  // HACK OF AN AMAZING ORDER
     const drawOrder = drawKeyToOrderMap[gS.ctxStyle.drawOrder]; // optional separation of stroke / fill layers
     for(let drawSet of drawOrder){
       for (let af of affineset) {
@@ -110,10 +113,11 @@ export class PathTool {
             // line specialization
             if(l2dist(Tpt0, Tcpt0) < EPS && l2dist(Tpt1, Tcpt1)){
               lctx.lineTo(Tpt1[0], Tpt1[1]);
-              this.voronoi.renderLine(this.line_id, Tpt, Tpt1); // TODO
+              // this.voronoi.renderLine(this.line_id, Tpt, Tpt1); // TODO
             }
             else {
               lctx.bezierCurveTo(Tcpt0[0], Tcpt0[1], Tcpt1[0], Tcpt1[1], Tpt1[0], Tpt1[1]);
+              this.voronoi.renderCurve(this.line_id, Tpt0, Tcpt0, Tcpt1, Tpt1);
             }
             ptidx += 3;
           }
@@ -121,6 +125,7 @@ export class PathTool {
             lctx[drawFunc]();
           }
         }
+        this.line_id += 2;
       }
     }
     if(this.points.length==1){ //initial point

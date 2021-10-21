@@ -50,7 +50,11 @@ import {CircleTool, CircleOp}   from './circleTool';
 import {PolyTool, PolyOp}     from './polyTool';
 import {PathTool, PathOp}     from './pathTool';
 
+// Voronoi Import
+//------------------------------------------------------------------------------
+import { Voronoi2D } from './voronoi.js';
 
+export const gVoronoi = new Voronoi2D();
 
 
 // gS = global State

@@ -69,6 +69,8 @@ export class Voronoi2D {
         this.coneHeight = 1;
         this.coneSegments = 32;
 
+        this.curveSegments = 32;
+
         this.prismGeometry = {};
         this.createPrismGeometry();
 
@@ -89,6 +91,37 @@ export class Voronoi2D {
         this.render();
     }
 
+    renderCurve(curve_id, start_point, ctrl_point1, ctrl_point2, end_point) {
+        start_point = this.transformCoords(start_point);
+        ctrl_point1 = this.transformCoords(ctrl_point1);
+        ctrl_point2 = this.transformCoords(ctrl_point2);
+        end_point = this.transformCoords(end_point);
+
+        var start_v = new THREE.Vector2(start_point[0], start_point[1]);
+        var ctrl_v1 = new THREE.Vector2(ctrl_point1[0], ctrl_point1[1]);
+        var ctrl_v2 = new THREE.Vector2(ctrl_point2[0], ctrl_point2[1]);
+        var end_v = new THREE.Vector2(end_point[0], end_point[1]);
+
+        if(this.voronoi_lines[curve_id] == null) {
+            this.createBezierCurve(curve_id, start_v, ctrl_v1, ctrl_v2, end_v);
+            for(var i = 0; i < this.voronoi_lines[curve_id]['cones'].length; i++) {
+                this.scene.add(this.voronoi_lines[curve_id]['cones'][i]);
+            }
+            for(var i = 0; i < this.voronoi_lines[curve_id]['prisms'].length; i++) {
+                this.scene.add(this.voronoi_lines[curve_id]['prisms'][i]);
+            }
+        } else if(this.voronoi_lines[curve_id]['isHidden'] == false) {
+            for(var i = 0; i < this.voronoi_lines[curve_id]['cones'].length; i++) {
+                this.scene.add(this.voronoi_lines[curve_id]['cones'][i]);
+            }
+            for(var i = 0; i < this.voronoi_lines[curve_id]['prisms'].length; i++) {
+                this.scene.add(this.voronoi_lines[curve_id]['prisms'][i]);
+            }
+            this.voronoi_lines[curve_id]['isHidden'] = true;
+        }
+        this.modifyCurve(curve_id, start_v, ctrl_v1, ctrl_v2, end_v);
+    }
+
     renderLine(line_id, point1, point2) {
         point1 = this.transformCoords(point1);
         point2 = this.transformCoords(point2);
@@ -100,17 +133,13 @@ export class Voronoi2D {
             this.createLine(line_id, point_v1, point_v2);
             this.scene.add(this.voronoi_lines[line_id]['cones'][0]);
             this.scene.add(this.voronoi_lines[line_id]['cones'][1]);
-            this.scene.add(this.voronoi_lines[line_id]['prism']);
-        }
-
-        if(this.voronoi_lines[line_id]['isHidden'] == true) {
+            this.scene.add(this.voronoi_lines[line_id]['prisms'][0]);
+        } else if(this.voronoi_lines[line_id]['isHidden'] == true) {
             this.scene.add(this.voronoi_lines[line_id]['cones'][0]);
             this.scene.add(this.voronoi_lines[line_id]['cones'][1]);
-            this.scene.add(this.voronoi_lines[line_id]['prism']);
-
-            this.voronoi_lines[line_id]['isHidden'] == false;
+            this.scene.add(this.voronoi_lines[line_id]['prisms'][0]);
+            this.voronoi_lines[line_id]['isHidden'] = false;
         }
-
         this.modifyLine(line_id, point_v1, point_v2);
     }
 
@@ -143,18 +172,40 @@ export class Voronoi2D {
         return line;
     }
 
+    createBezierCurve(curve_id, start_v, ctrl_v1, ctrl_v2, end_v) {
+        const curve = new THREE.CubicBezierCurve(start_v, ctrl_v1, ctrl_v2, end_v);
+        const curve_points = curve.getPoints(this.curveSegments);
+        var cone_color = this.color;
+
+        var voronoi_cones = [];
+        var voronoi_prisms = [];
+
+        voronoi_cones.push(this.makeSeed(curve_points[0], cone_color));
+        for(var i = 1; i < curve_points.length; i++) {
+            voronoi_cones.push(this.makeSeed(curve_points[i], cone_color));
+            voronoi_prisms.push(this.makePrism(curve_points[i - 1], curve_points[i], cone_color));
+        }
+        this.voronoi_lines[curve_id] = {
+            'id': curve_id,
+            'color': cone_color,
+            'cones': voronoi_cones,
+            'prisms': voronoi_prisms,
+            'isHidden': false
+        };
+    }
+
     createLine(line_id, point_v1, point_v2) {
         var cone_color = this.color;
         var voronoi_cones = [];
         voronoi_cones.push(this.makeSeed(point_v1, cone_color));
         voronoi_cones.push(this.makeSeed(point_v2, cone_color));
 
-        var voronoi_prism = this.makePrism(point_v1, point_v2, cone_color);
+        var voronoi_prisms = [this.makePrism(point_v1, point_v2, cone_color)];
         this.voronoi_lines[line_id] = {
             'id': line_id,
             'color': cone_color,
             'cones': voronoi_cones,
-            'prism': voronoi_prism,
+            'prisms': voronoi_prisms,
             'isHidden': false
         };
     }
@@ -203,12 +254,37 @@ export class Voronoi2D {
         negative_point_v2.negate();
         var vec1_2 = new THREE.Vector2();
         vec1_2.addVectors(point_v1, negative_point_v2);
-        this.voronoi_lines[line_id]['prism'].rotation.y = Math.atan(vec1_2.y / vec1_2.x) + Math.PI / 2;
+        this.voronoi_lines[line_id]['prisms'][0].rotation.y = Math.atan(vec1_2.y / vec1_2.x) + Math.PI / 2;
         if(vec1_2.x >= 0) {
-            this.voronoi_lines[line_id]['prism'].rotation.y += Math.PI;
+            this.voronoi_lines[line_id]['prisms'][0].rotation.y += Math.PI;
         }
-        this.voronoi_lines[line_id]['prism'].scale.z = point_v1.distanceTo(point_v2);
-        this.voronoi_lines[line_id]['prism'].position.set(point_v1.x, point_v1.y, 0);
+        this.voronoi_lines[line_id]['prisms'][0].scale.z = point_v1.distanceTo(point_v2);
+        this.voronoi_lines[line_id]['prisms'][0].position.set(point_v1.x, point_v1.y, 0);
+    }
+
+    modifyCurve(curve_id, start_v, ctrl_v1, ctrl_v2, end_v) {
+        assert(this.voronoi_lines[curve_id] != null, "Cannot find the line.");
+
+        const curve = new THREE.CubicBezierCurve(start_v, ctrl_v1, ctrl_v2, end_v);
+        const curve_points = curve.getPoints(this.curveSegments);
+
+        this.voronoi_lines[curve_id]['cones'][0].position.set(curve_points[0].x, curve_points[0].y, this.coneHeight / 2);
+
+        for(var i = 1; i < curve_points.length; i++) {
+            this.voronoi_lines[curve_id]['cones'][i].position.set(curve_points[i].x, curve_points[i].y, this.coneHeight / 2);
+    
+            var negative_point_v2 = new THREE.Vector2(curve_points[i].x, curve_points[i].y);
+            negative_point_v2.negate();
+            var vec1_2 = new THREE.Vector2();
+            vec1_2.addVectors(curve_points[i - 1], negative_point_v2);
+            this.voronoi_lines[curve_id]['prisms'][i - 1].rotation.y = Math.atan(vec1_2.y / vec1_2.x) + Math.PI / 2;
+            if(vec1_2.x >= 0) {
+                this.voronoi_lines[curve_id]['prisms'][i - 1].rotation.y += Math.PI;
+            }
+            this.voronoi_lines[curve_id]['prisms'][i - 1].scale.z = curve_points[i - 1].distanceTo(curve_points[i]);
+            this.voronoi_lines[curve_id]['prisms'][i - 1].position.set(curve_points[i - 1].x, curve_points[i - 1].y, 0);
+        }
+        console.log("Modified curve");
     }
 
     hideLine(line_id) {
@@ -216,7 +292,9 @@ export class Voronoi2D {
             for(var i = 0; i < this.voronoi_lines[line_id]['cones'].length; i++) {
                 this.scene.remove(this.voronoi_lines[line_id]['cones'][i]);
             }
-            this.scene.remove(this.voronoi_lines[line_id]['prism']);
+            for(var i = 0; i < this.voronoi_lines[line_id]['cones'].length; i++) {
+                this.scene.remove(this.voronoi_lines[line_id]['prisms'][i]);
+            }
             this.voronoi_lines[line_id]['isHidden'] = true;
         }
     }

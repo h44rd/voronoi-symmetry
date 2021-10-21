@@ -13,14 +13,14 @@
 import {gS,
         livecanvas, lctx, canvas, ctx, vctx,
         affineset, updateSymmetry, updateStyle, drawKeyToOrderMap,
-        commitOp
+        commitOp,
+        gVoronoi
        } from './main';
 import _ from 'underscore';
 import {l2dist} from './math_utils';
 
 import {drawHitCircle} from './canvas_utils';
 
-import { Voronoi2D } from './voronoi';
 // Draw Single Line Segments
 //------------------------------------------------------------------------------
 export class LineOp {
@@ -65,7 +65,7 @@ export class LineTool {
       {name: "cancel", desc: "cancel line",    icon: "icon-cross",     key: "Escape"},
       {name: "commit", desc: "start new (automatic on new click)", icon: "icon-checkmark", key: "Enter"},
     ];
-    this.voronoi = new Voronoi2D();
+    this.voronoi = gVoronoi;
     this.line_id = 0;
   }
 
@@ -89,7 +89,7 @@ export class LineTool {
       } else {
         this.voronoi.hideLine(this.line_id);
       }
-      this.line_id += 1;
+      this.line_id += 2;
     }
     drawHitCircle(lctx, this.points[0][0]-0.5, this.points[0][1]-0.5, this.hitRadius);
     drawHitCircle(lctx, this.points[1][0]-0.5, this.points[1][1]-0.5, this.hitRadius);
