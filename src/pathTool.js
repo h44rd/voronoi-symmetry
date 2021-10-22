@@ -81,7 +81,7 @@ export class PathTool {
     this.state = _INIT_;
     this.ctrlPoint = [];
     this.pointsSelected = [];
-    this.hitRadius = 4;
+    this.hitRadius = 15; // 4
     this.actions = [
       {name: "cancel", desc: "cancel path", icon: "icon-cross", key: "Escape"},
       {name: "commit", desc: "start new path", icon: "icon-checkmark", key: "Enter"},

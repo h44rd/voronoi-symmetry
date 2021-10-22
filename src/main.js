@@ -65,8 +65,8 @@ export const gS = new Vue({
   data: {
     // global UI state variables
     params: {
-      curTool: 'pencil',         // Tool State
-      lastTool: 'pencil',        // only used by gridtool for toggling
+      curTool: 'path',         // Tool State
+      lastTool: 'path',        // only used by gridtool for toggling
       fullUI: true,
       showNav: true,
       showTool: true,
@@ -786,8 +786,8 @@ const initState = function() {
   rerender(ctx);
 
   //HACK: needed to get Vue to properly update pencil options slider on init... a Vue bug?
-  gS.params.curTool = 'poly';
-  setTimeout(()=>gS.params.curTool = 'line', 10);
+  gS.params.curTool = 'path';
+  setTimeout(()=>gS.params.curTool = 'path', 10);
 
 };
 
