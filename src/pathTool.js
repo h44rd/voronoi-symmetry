@@ -114,10 +114,12 @@ export class PathTool {
             if(l2dist(Tpt0, Tcpt0) < EPS && l2dist(Tpt1, Tcpt1)){
               lctx.lineTo(Tpt1[0], Tpt1[1]);
               // this.voronoi.renderLine(this.line_id, Tpt, Tpt1); // TODO
+              this.voronoi.renderCurve(this.line_id * (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1); // One hack after another (last semester vibes)
+              console.log("Line stuff");
             }
             else {
               lctx.bezierCurveTo(Tcpt0[0], Tcpt0[1], Tcpt1[0], Tcpt1[1], Tpt1[0], Tpt1[1]);
-              this.voronoi.renderCurve(this.line_id, Tpt0, Tcpt0, Tcpt1, Tpt1);
+              this.voronoi.renderCurve(this.line_id * (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1);
             }
             ptidx += 3;
           }

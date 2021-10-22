@@ -69,7 +69,7 @@ export class Voronoi2D {
         this.coneHeight = 1;
         this.coneSegments = 32;
 
-        this.curveSegments = 32;
+        this.curveSegments = 16;
 
         this.prismGeometry = {};
         this.createPrismGeometry();
