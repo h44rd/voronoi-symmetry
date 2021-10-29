@@ -34,9 +34,10 @@ export class PathOp {
     _.assign(ctx, this.ctxStyle);
     updateSymmetry(this.symmState);
     const drawOrder = drawKeyToOrderMap[this.ctxStyle.drawOrder]; // optional separation of stroke / fill layers
+    this.line_id = 1;  // HACK OF AN AMAZING ORDER
     for(let drawSet of drawOrder){
-      this.line_id = 0;
       for (let af of affineset) {
+        this.voronoi.setNewColor(this.line_id);
         ctx.beginPath();
         let Tpt = af.onVec(this.points[0]);
         ctx.moveTo(Tpt[0], Tpt[1]);
@@ -51,8 +52,8 @@ export class PathOp {
           }
           else {
             ctx.bezierCurveTo(Tcpt0[0], Tcpt0[1], Tcpt1[0], Tcpt1[1], Tpt1[0], Tpt1[1]);
-            this.voronoi.renderCurve(this.line_id, Tpt0, Tcpt0, Tcpt1, Tpt1);
           }
+          this.voronoi.renderCurve(this.line_id * (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1); // One hack after another (last semester vibes)
           ptidx += 3;
         }
         for(let drawFunc of drawSet){ //drawFunc = "stroke" or "fill"
@@ -97,6 +98,7 @@ export class PathTool {
     if(this.points.length==0){return;}
     this.line_id = 1;  // HACK OF AN AMAZING ORDER
     const drawOrder = drawKeyToOrderMap[gS.ctxStyle.drawOrder]; // optional separation of stroke / fill layers
+    // console.log("----- New render -----");
     for(let drawSet of drawOrder){
       for (let af of affineset) {
         this.voronoi.setNewColor(this.line_id);
@@ -113,14 +115,14 @@ export class PathTool {
             // line specialization
             if(l2dist(Tpt0, Tcpt0) < EPS && l2dist(Tpt1, Tcpt1)){
               lctx.lineTo(Tpt1[0], Tpt1[1]);
-              // this.voronoi.renderLine(this.line_id, Tpt, Tpt1); // TODO
-              this.voronoi.renderCurve(this.line_id * (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1); // One hack after another (last semester vibes)
-              console.log("Line stuff");
+              this.voronoi.renderLine(this.line_id * 97 + (ptidx + 1), Tpt0, Tpt1);
             }
             else {
               lctx.bezierCurveTo(Tcpt0[0], Tcpt0[1], Tcpt1[0], Tcpt1[1], Tpt1[0], Tpt1[1]);
-              this.voronoi.renderCurve(this.line_id * (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1);
+              this.voronoi.renderCurve(this.line_id * 97 + (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1); // One hack after another (last semester vibes)
             }
+            // this.voronoi.renderCurve(this.line_id * (ptidx + 1), Tpt0, Tcpt0, Tcpt1, Tpt1); // One hack after another (last semester vibes)
+            // console.log("Point ID " + (ptidx + 1) + " Line id " + this.line_id + " ID " + this.line_id * (ptidx + 1));
             ptidx += 3;
           }
           for(let drawFunc of drawSet){

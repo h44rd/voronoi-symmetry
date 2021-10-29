@@ -38,20 +38,12 @@ export class Voronoi2D {
         const renderPass = new RenderPass(this.scene, this.camera);
         this.composer.addPass(renderPass);
 
-        // color to grayscale conversion
-
-        // const effectGrayScale = new ShaderPass( LuminosityShader );
-        // this.composer.addPass( effectGrayScale );
-
-        // you might want to use a gaussian blur filter before
-        // the next pass to improve the result of the Sobel operator
-
         // Sobel operator
 
-        const effectSobel = new ShaderPass( PostProcessShader );
-        effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-        effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-        this.composer.addPass( effectSobel );
+        this.effectSobel = new ShaderPass( PostProcessShader );
+        this.effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+        this.effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
+        this.composer.addPass( this.effectSobel );
 
         // :::: Voronoi elements :::: //
         this.colorHue = 47;
@@ -60,7 +52,7 @@ export class Voronoi2D {
         var geometry = new THREE.PlaneGeometry(10, 10);
         var material = new THREE.MeshBasicMaterial({ color: this.getRandomHueColor(70) });
         this.plane = new THREE.Mesh(geometry, material);
-        this.plane.position.z = -3.0;
+        this.plane.position.z = 0.6;
         this.scene.add(this.plane);
 
         this.line_divisions = 6;
@@ -77,13 +69,25 @@ export class Voronoi2D {
         // :::: Data :::: //
         this.voronoi_lines = [];
 
+        // :::: Settings :::: //
+        this.isBorder = true;
+
         this.animate();
     }
 
     // :::::::::: Rendering :::::::::: //
     render() {
         // this.renderer.render(this.scene, this.camera);
-        this.composer.render();
+        if(this.isBorder == true) {
+            if(this.isSegmentColor == true) {
+                this.composer.render();
+            } else {
+                this.composer.render();
+            }
+        }
+        else {
+            this.renderer.render(this.scene, this.camera);            
+        }
     }
 
     animate() {
@@ -103,6 +107,15 @@ export class Voronoi2D {
         var end_v = new THREE.Vector2(end_point[0], end_point[1]);
 
         if(this.voronoi_lines[curve_id] == null) {
+            this.createBezierCurve(curve_id, start_v, ctrl_v1, ctrl_v2, end_v);
+            for(var i = 0; i < this.voronoi_lines[curve_id]['cones'].length; i++) {
+                this.scene.add(this.voronoi_lines[curve_id]['cones'][i]);
+            }
+            for(var i = 0; i < this.voronoi_lines[curve_id]['prisms'].length; i++) {
+                this.scene.add(this.voronoi_lines[curve_id]['prisms'][i]);
+            }
+        } else if(this.voronoi_lines[curve_id]['isLineSegment'] == true) {
+            this.hideLine(curve_id);
             this.createBezierCurve(curve_id, start_v, ctrl_v1, ctrl_v2, end_v);
             for(var i = 0; i < this.voronoi_lines[curve_id]['cones'].length; i++) {
                 this.scene.add(this.voronoi_lines[curve_id]['cones'][i]);
@@ -130,6 +143,12 @@ export class Voronoi2D {
         var point_v2 = new THREE.Vector2(point2[0], point2[1]);
         
        if(this.voronoi_lines[line_id] == null) {
+            this.createLine(line_id, point_v1, point_v2);
+            this.scene.add(this.voronoi_lines[line_id]['cones'][0]);
+            this.scene.add(this.voronoi_lines[line_id]['cones'][1]);
+            this.scene.add(this.voronoi_lines[line_id]['prisms'][0]);
+        } else if(this.voronoi_lines[line_id]['isLineSegment'] == false) {
+            this.hideLine(line_id);
             this.createLine(line_id, point_v1, point_v2);
             this.scene.add(this.voronoi_lines[line_id]['cones'][0]);
             this.scene.add(this.voronoi_lines[line_id]['cones'][1]);
@@ -190,7 +209,8 @@ export class Voronoi2D {
             'color': cone_color,
             'cones': voronoi_cones,
             'prisms': voronoi_prisms,
-            'isHidden': false
+            'isHidden': false,
+            'isLineSegment': false
         };
     }
 
@@ -206,7 +226,8 @@ export class Voronoi2D {
             'color': cone_color,
             'cones': voronoi_cones,
             'prisms': voronoi_prisms,
-            'isHidden': false
+            'isHidden': false,
+            'isLineSegment': true
         };
     }
 
@@ -284,7 +305,6 @@ export class Voronoi2D {
             this.voronoi_lines[curve_id]['prisms'][i - 1].scale.z = curve_points[i - 1].distanceTo(curve_points[i]);
             this.voronoi_lines[curve_id]['prisms'][i - 1].position.set(curve_points[i - 1].x, curve_points[i - 1].y, 0);
         }
-        console.log("Modified curve");
     }
 
     hideLine(line_id) {

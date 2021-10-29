@@ -29,12 +29,12 @@
       <!--<b>?</b>-->
     </div>
 
-    <template v-if="params.fullUI">
+    <!-- <template v-if="params.fullUI">
       <div class="button" @mousedown="config"
            @mouseover="setHint" hint="settings e.g. turn off these hints">
         <span class="icon-cog"></span>
       </div>
-    </template>
+    </template> -->
 
     <template v-if="!params.fullUI">
       <div class="button" :class="{selected: params.showTool}" @mousedown="toggleTool"
@@ -59,7 +59,7 @@
       </div>
     </template>
 
-    <div class="button" @mousedown="undo" key="stateui-undo"
+    <!-- <div class="button" @mousedown="undo" key="stateui-undo"
          @mouseover="setHint" hint="step back one drawing operation">
       <span class="icon-undo"></span>
     </div>
@@ -72,7 +72,7 @@
          @mouseover="setHint" hint="reset drawing (double click to confirm)">
       <template v-if="armed"><span class="icon-bin"></span>?</template>
       <template v-else><span class="icon-bin"></span></template>
-    </div>
+    </div> -->
 
 
     <template v-if="!params.fullUI">
