@@ -52,7 +52,7 @@ export class Voronoi2D {
         var geometry = new THREE.PlaneGeometry(10, 10);
         var material = new THREE.MeshBasicMaterial({ color: this.getRandomHueColor(70) });
         this.plane = new THREE.Mesh(geometry, material);
-        this.plane.position.z = 0.6;
+        this.plane.position.z = 0.2;
         this.scene.add(this.plane);
 
         this.line_divisions = 6;
