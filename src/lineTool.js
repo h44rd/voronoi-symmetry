@@ -60,7 +60,7 @@ export class LineTool {
   constructor() {
     this.points = [[0,0],[0,0]];
     this.state = _INIT_;
-    this.hitRadius = 4;
+    this.hitRadius = 15;
     this.actions = [
       {name: "cancel", desc: "cancel line",    icon: "icon-cross",     key: "Escape"},
       {name: "commit", desc: "start new (automatic on new click)", icon: "icon-checkmark", key: "Enter"},
