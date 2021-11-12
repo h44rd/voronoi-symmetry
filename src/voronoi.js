@@ -57,8 +57,8 @@ export class Voronoi2D {
 
         this.line_divisions = 6;
 
-        this.coneRadius = 0.3;
-        this.coneHeight = 1;
+        this.coneRadius = 0.6;
+        this.coneHeight = 2;
         this.coneSegments = 32;
 
         this.curveSegments = 16;
